@@ -1,0 +1,29 @@
+.content-app {
+  margin: 10px 0px 0px 30px;
+  width: 350px;
+  height: 70px;
+  background-color: #b2b3b4;
+  border-radius: 5px;
+  .content-app_img {
+    margin: 10px 0px 0px 10px;
+    float: left;
+    width: 70px;
+    height: 50px;
+    img {
+      width: 60px;
+      height: 50px;
+    }
+  }
+  .content-app_button {
+    margin: 10px 0px 0px 40px;
+    float: left;
+    width: 100px;
+    height: 40px;
+  }
+  .content-app_name {
+    margin: 20px 0px 0px 10px;
+    float: left;
+    width: 100px;
+    height: 40px;
+  }
+}
