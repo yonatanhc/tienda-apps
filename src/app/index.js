@@ -98,17 +98,7 @@ export default function App() {
           </Route>
         </Switch>
       </Router>
-      <ToastContainer
-        position="bottom-left"
-        autoClose={5000}
-        hideProgressBar
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnVisibilityChange={false}
-        draggable
-        pauseOnHover={false}
-      />
+      <ToastContainer />
     </div>
   );
 }

@@ -38,25 +38,25 @@ app.post(
     mysqlConnection.query(
       "SELECT * FROM user WHERE email=?",
       [req.body.email],
-      function (err, result, fields) {
-        if (result.length == 0) {
-          return res.status(422).json({ errors: "no existe email" });
+      async (err, result, fields) => {
+        if (!result[0]) {
+          return res.status(400).json({ errors: "email incorrecto" });
         } else {
-          const validPassword = bcrypt.compare(
+          const validPassword = await bcrypt.compare(
             req.body.password,
             result[0].password
           );
+
           if (validPassword) {
             console.log("usuario correcto!");
-            res.json({
+            res.status(200).json({
               nombre: result[0].nombre,
-              email: result[0].email,
               id_user: result[0].id_user,
               tipo: result[0].tipo,
               apps: result[0].apps,
             });
           } else {
-            return res.status(422).json({ errors: "password incorrecto" });
+            return res.status(401).json({ errors: "password incorrecto" });
           }
         }
       }
@@ -72,17 +72,16 @@ app.post(
     check("password").isLength({ min: 8 }),
   ],
   async (req, res) => {
-    console.log(req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
     }
     await mysqlConnection.query(
-      "SELECT email FROM user WHERE email = ?",
+      "SELECT * FROM user WHERE email = ?",
       [req.body.email],
       async (err, result, fields) => {
         if (result[0]) {
-          res.status(422).json({ errors: "email ya existe" });
+          return res.status(400).json({ errors: "email ya esta registrado" });
         } else {
           const salt = await bcrypt.genSalt(10);
           const hashPassword = await bcrypt.hash(req.body.password, salt);
@@ -98,9 +97,11 @@ app.post(
             value,
             (err, result, fields) => {
               if (err)
-                res.status(422).json({ errors: "error al guardar usuario" });
+                return res
+                  .status(401)
+                  .json({ errors: "error al guardar usuario" });
               else {
-                res.status(200).json(result);
+                return res.status(200).json(result);
               }
             }
           );

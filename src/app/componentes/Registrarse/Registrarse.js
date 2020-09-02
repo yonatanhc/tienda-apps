@@ -15,6 +15,16 @@ function Registrarse(props) {
     tipo: " ",
   });
 
+  const typeToast = {
+    position: "top-center",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+  };
+
   const handleInputChange = (event) => {
     setDatos({
       ...datos,
@@ -31,21 +41,25 @@ function Registrarse(props) {
         "Content-Type": "application/json",
       },
     });
-    if (res.status == 422) {
-      console.log(res);
-      const jsons = await res.json();
-      console.log(jsons);
-      toast.success(jsons.errors);
-      props.history.push("/");
-    } else {
+    if (res.status == 200) {
       toast.success("usuario registrado");
       props.history.push("/login");
+    } else {
+      const errs = (await res.json()).errors;
+      if (res.status == 422) {
+        errs.map((err, index) => {
+          var msjError = "error en : " + err.param;
+          toast.error(msjError, typeToast);
+        });
+      } else {
+        toast.error(errs, typeToast);
+      }
     }
   };
 
   return (
     <Form className="col register" onSubmit={enviarDatos}>
-      <div className="col-md-3">
+      <div className="col-md-4">
         Nombre:
         <input
           placeholder="ingrese nombre"
@@ -55,7 +69,7 @@ function Registrarse(props) {
           onChange={handleInputChange}
         ></input>
       </div>
-      <div className="col-md-3">
+      <div className="col-md-4">
         Email:
         <input
           placeholder="ingrese Email"
@@ -65,7 +79,7 @@ function Registrarse(props) {
           onChange={handleInputChange}
         ></input>
       </div>
-      <div className="col-md-3">
+      <div className="col-md-4">
         Contraseña:
         <input
           placeholder="ingrese contraseña"
@@ -75,7 +89,7 @@ function Registrarse(props) {
           onChange={handleInputChange}
         ></input>
       </div>
-      <div className="col-md-3">
+      <div className="col-md-4">
         Tipo de Usuario:
         <select
           className="form-control"
@@ -89,7 +103,7 @@ function Registrarse(props) {
           <option value="desarrollador">desarrollador</option>
         </select>
       </div>
-      <div className="col-md-3">
+      <div className="col-md-4">
         <button className="btn btn-primary button" type="submit">
           Guardar
         </button>
